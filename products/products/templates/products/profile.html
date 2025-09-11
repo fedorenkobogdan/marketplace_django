@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Профіль{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0">👤 Профіль користувача: {{ user.username }}</h2>
+  <a href="{% url 'profile_edit' %}" class="btn btn-outline-primary btn-sm">✏️ Редагувати профіль</a>
+  <a href="{% url 'password_change' %}" class="btn btn-outline-secondary btn-sm">🔑 Змінити пароль</a>
+
+</div>
+
+
+  <div class="mb-3">
+    {% if user.email %}
+      <p><strong>Email:</strong> {{ user.email }}</p>
+    {% endif %}
+    {% if user.first_name %}
+      <p><strong>Ім'я:</strong> {{ user.first_name }}</p>
+    {% endif %}
+  </div>
+
+  <hr>
+
+  <h4 class="mb-3">🛍 Товари, додані вами:</h4>
+  {% if products %}
+    <ul class="list-group">
+      {% for product in products %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ product.name }}</strong><br>
+            <small>{{ product.price }} грн</small>
+          </div>
+          <div>
+            <a href="{% url 'product_detail' product.pk %}" class="btn btn-sm btn-outline-primary me-2">👁 Переглянути</a>
+            <a href="{% url 'product_update' product.pk %}" class="btn btn-sm btn-outline-warning me-2">✏️</a>
+            <a href="{% url 'product_delete' product.pk %}" class="btn btn-sm btn-outline-danger">🗑</a>
+            
+
+            
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>У вас ще немає доданих товарів.</p>
+  {% endif %}
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}  {# ⬅️ Додано для роботи add_class #}
+
+{% block title %}{{ product.name|default:"Новий товар" }}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2 class="mb-4">{{ product.name|default:"📝 Додати товар" }}</h2>
+
+  <form method="post" enctype="multipart/form-data" class="p-4 bg-white shadow rounded-3">
+    {% csrf_token %}
+
+    <!-- 🔴 Загальні помилки -->
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {{ form.non_field_errors }}
+      </div>
+    {% endif %}
+
+    <!-- 🔧 Поля форми -->
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label" for="{{ form.name.id_for_label }}">Назва товару:</label>
+        {{ form.name|add_class:"form-control" }}
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label" for="{{ form.category.id_for_label }}">Категорія:</label>
+        {{ form.category|add_class:"form-select" }}
+      </div>
+
+      <div class="col-md-12">
+        <label class="form-label" for="{{ form.description.id_for_label }}">Опис:</label>
+        {{ form.description|add_class:"form-control" }}
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label" for="{{ form.price.id_for_label }}">Ціна (грн):</label>
+        {{ form.price|add_class:"form-control" }}
+      </div>
+
+      <div class="col-md-8">
+        <label class="form-label" for="{{ form.image.id_for_label }}">Головне зображення:</label>
+        {{ form.image|add_class:"form-control" }}
+      </div>
+
+      <!-- 📎 Додаткові зображення -->
+      <div class="col-md-12">
+        <label for="id_images" class="form-label">📸 Додаткові зображення:</label>
+        <input type="file" name="images" id="id_images" multiple class="form-control">
+        <small class="text-muted">Можна вибрати кілька файлів (Ctrl або Shift).</small>
+      </div>
+    </div>
+
+    <!-- 🖼 Існуючі фото -->
+    {% if product and product.productimage_set.exists %}
+      <div class="mt-4">
+        <label class="form-label">🖼 Додані зображення:</label>
+        <div class="d-flex flex-wrap gap-3">
+          {% for image in product.productimage_set.all %}
+            <div class="position-relative">
+              <img src="{{ image.image.url }}" class="border rounded" style="width: 120px; height: 120px; object-fit: cover;" alt="Зображення">
+              <a href="{% url 'product_image_delete' image.pk %}" 
+                 class="btn btn-sm btn-danger position-absolute top-0 end-0" 
+                 onclick="return confirm('Ви впевнені, що хочете видалити це зображення?');">×</a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- ✅ Кнопки -->
+    <div class="mt-4 d-flex gap-2">
+      <button type="submit" class="btn btn-success">💾 Зберегти</button>
+      <a href="{% url 'product_list' %}" class="btn btn-secondary">← Назад</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Мій профіль{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <!-- 🧍 Інформація про користувача -->
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow-sm p-4">
+        <h4 class="mb-3">👤 Профіль користувача</h4>
+        <p><strong>Логін:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Ім’я:</strong> {{ user.first_name }}</p>
+        <p><strong>Прізвище:</strong> {{ user.last_name }}</p>
+
+        <div class="d-grid gap-2 mt-4">
+          <a href="{% url 'profile_edit' %}" class="btn btn-warning">✏️ Редагувати профіль</a>
+          <a href="{% url 'password_change' %}" class="btn btn-outline-secondary">🔐 Змінити пароль</a>
+          <a href="{% url 'my_orders' %}" class="btn btn-outline-success">📄 Мої замовлення</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🛍 Товари користувача -->
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow-sm p-4">
+        <h4 class="mb-3">📦 Ваші товари</h4>
+
+        {% if products %}
+          <ul class="list-group list-group-flush">
+            {% for product in products %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ product.name }}
+                <a href="{% url 'product_detail' product.pk %}" class="btn btn-sm btn-outline-primary">👁 Переглянути</a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="text-muted">У вас поки немає доданих товарів.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

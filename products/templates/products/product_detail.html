@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row g-4">
+    <!-- 🖼 Фото товару -->
+    <div class="col-md-6">
+      {% if images %}
+        <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+          
+          {% if images|length > 1 %}
+            <div class="carousel-indicators">
+              {% for image in images %}
+                <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
+                        class="{% if forloop.first %}active{% endif %}" aria-current="true"
+                        aria-label="Слайд {{ forloop.counter }}"></button>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <div class="carousel-inner">
+            {% for image in images %}
+              <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <img src="{{ image.image.url }}" class="d-block w-100 rounded shadow-sm" alt="{{ product.name }}"
+                     style="max-height: 450px; object-fit: contain;">
+              </div>
+            {% endfor %}
+          </div>
+
+          {% if images|length > 1 %}
+            <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+              <span class="carousel-control-next-icon"></span>
+            </button>
+          {% endif %}
+        </div>
+      {% else %}
+        <img src="{% static 'products/no-image.png' %}" class="img-fluid rounded shadow-sm" alt="Без зображення">
+      {% endif %}
+    </div>
+
+    <!-- ℹ️ Інформація про товар -->
+    <div class="col-md-6">
+      <h2>{{ product.name }}</h2>
+      <p class="text-muted">{{ product.description }}</p>
+      <p class="fw-bold fs-4 text-success">{{ product.price }} грн</p>
+
+      {% if product.category %}
+        <p>Категорія: <span class="badge bg-secondary">{{ product.category.name }}</span></p>
+      {% endif %}
+
+      <p>Продавець: <strong>{{ product.author.username }}</strong></p>
+
+      <form action="{% url 'add_to_cart' product.pk %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary btn-lg mt-3">🛒 Додати в кошик</button>
+      </form>
+
+      {% if user == product.author %}
+        <div class="mt-3 d-flex gap-2">
+          <a href="{% url 'product_update' product.pk %}" class="btn btn-outline-warning btn-sm">✏️ Редагувати</a>
+          <a href="{% url 'product_delete' product.pk %}" class="btn btn-outline-danger btn-sm">🗑 Видалити</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- 💬 Коментарі -->
+  <div class="mt-5">
+    <h5>💬 Коментарі</h5>
+
+    {% if comments %}
+      <ul class="list-group mb-4">
+        {% for comment in comments %}
+          <li class="list-group-item">
+            <strong>{{ comment.author.username }}</strong> — 
+            <small class="text-muted">{{ comment.created_at|date:"d.m.Y H:i" }}</small>
+            <p class="mb-0">{{ comment.content }}</p>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-muted">Немає коментарів.</p>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+      <form method="post" class="mt-3">
+        {% csrf_token %}
+        {{ comment_form.content|attr:"placeholder:Ваш коментар..."|add_class:"form-control" }}
+        <button type="submit" class="btn btn-outline-primary mt-2">💬 Залишити коментар</button>
+      </form>
+    {% else %}
+      <p>Щоб залишити коментар, <a href="{% url 'login' %}">увійдіть</a>.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  textarea {
+    width: 100%;
+    min-height: 100px;
+    resize: vertical;
+  }
+</style>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

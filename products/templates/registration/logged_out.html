@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Вихід{% endblock %}
+{% block content %}
+<div class="alert alert-info mt-4">
+  Ви вийшли з акаунту.
+</div>
+<a href="{% url 'login' %}" class="btn btn-primary">Увійти знову</a>
+{% endblock %}
+
+

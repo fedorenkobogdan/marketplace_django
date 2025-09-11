@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm p-4">
+  <div class="row g-4">
+
+    <!-- 🖼 Карусель зображень -->
+    <div class="col-md-5 position-relative">
+      {% if product.image or product.productimage_set.exists %}
+        <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner rounded shadow-sm" style="max-height: 350px;">
+            
+            {% if product.image %}
+              <div class="carousel-item active position-relative">
+                <img src="{{ product.image.url }}" class="d-block w-100" alt="Основне зображення" style="object-fit: contain; height: 350px;">
+              </div>
+            {% endif %}
+
+            {% for img in product.productimage_set.all %}
+              <div class="carousel-item {% if not product.image and forloop.first %}active{% endif %} position-relative">
+                <img src="{{ img.image.url }}" class="d-block w-100" alt="Зображення {{ forloop.counter }}" style="object-fit: contain; height: 350px;">
+
+                {% if user == product.author %}
+                  <form method="post" action="{% url 'product_image_delete' img.pk %}" 
+                        onsubmit="return confirm('Ви впевнені, що хочете видалити це зображення?')" 
+                        style="position: absolute; top: 10px; right: 10px;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-danger">🗑</button>
+                  </form>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+
+          {% if product.image or product.productimage_set.count > 1 %}
+            <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+              <span class="carousel-control-next-icon"></span>
+            </button>
+          {% endif %}
+        </div>
+      {% else %}
+        <div class="text-muted text-center p-4 border bg-light rounded">
+          Немає зображень
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- ℹ️ Інформація про товар -->
+    <div class="col-md-7">
+      <h2 class="mb-3">{{ product.name }}</h2>
+      <p class="text-muted">{{ product.description }}</p>
+      <p><strong class="fs-4 text-success">{{ product.price }} грн</strong></p>
+
+      {% if product.category %}
+        <p>📦 Категорія: <span class="badge bg-info text-dark">{{ product.category.name }}</span></p>
+      {% endif %}
+
+      <p class="text-secondary">🕓 Додано: {{ product.created_at|date:"d.m.Y H:i" }}</p>
+
+      {% if product.author %}
+        <p>👤 Автор: <strong>{{ product.author.username }}</strong></p>
+      {% endif %}
+
+      <div class="mt-4 d-flex gap-2">
+        <a href="{% url 'product_list' %}" class="btn btn-outline-secondary">← Назад</a>
+
+        {% if user == product.author %}
+          <a href="{% url 'product_update' product.pk %}" class="btn btn-outline-warning">✏️</a>
+          <a href="{% url 'product_delete' product.pk %}" class="btn btn-outline-danger">🗑</a>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+          <form method="post" action="{% url 'add_to_cart' product.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">🛒 Додати в кошик</button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 💬 Коментарі -->
+<div class="mt-5">
+  <h4>💬 Коментарі ({{ comments.count }})</h4>
+
+  {% if comments %}
+    <ul class="list-group mb-4">
+      {% for comment in comments %}
+        <li class="list-group-item">
+          <strong>{{ comment.author.username }}</strong>
+          <small class="text-muted">{{ comment.created_at|date:"d.m.Y H:i" }}</small>
+          <p class="mb-0">{{ comment.content }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-muted">Поки немає коментарів.</p>
+  {% endif %}
+
+  {% if user.is_authenticated %}
+    <form method="post" class="card p-3 shadow-sm">
+      {% csrf_token %}
+      {{ comment_form.non_field_errors }}
+      <div class="mb-2">
+        {{ comment_form.content.label_tag }}
+        {{ comment_form.content }}
+      </div>
+      <button type="submit" class="btn btn-primary">💬 Додати коментар</button>
+    </form>
+  {% else %}
+    <p><a href="{% url 'login' %}">Увійдіть</a>, щоб залишити коментар.</p>
+  {% endif %}
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

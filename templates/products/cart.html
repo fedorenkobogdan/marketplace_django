@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Кошик{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">🛒 Ваш кошик</h2>
+
+  {% if cart_items %}
+    <div class="list-group mb-4 shadow-sm rounded">
+      {% for item in cart_items %}
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="mb-1">{{ item.product.name }}</h6>
+            <div class="text-muted small">
+              {{ item.product.price }} грн × {{ item.quantity }} = <strong>{{ item.subtotal }} грн</strong>
+            </div>
+          </div>
+          <div class="btn-group" role="group">
+            <a href="{% url 'cart_decrease' item.product.pk %}" class="btn btn-sm btn-outline-secondary" title="Зменшити">➖</a>
+            <a href="{% url 'cart_remove' item.product.pk %}" class="btn btn-sm btn-outline-danger" title="Видалити">🗑</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="text-end mb-4">
+      <h5>Загальна сума: <span class="text-success fw-bold">{{ total }} грн</span></h5>
+    </div>
+
+    <div class="d-flex justify-content-between flex-wrap gap-2">
+      <a href="{% url 'product_list' %}" class="btn btn-outline-primary">← Продовжити покупки</a>
+
+      <div class="d-flex gap-2">
+        <a href="{% url 'cart_clear' %}" class="btn btn-outline-danger">🧹 Очистити</a>
+        <a href="{% url 'checkout' %}" class="btn btn-success">✅ Оформити</a>
+      </div>
+    </div>
+  {% else %}
+    <div class="alert alert-info mt-4">
+      😕 Ваш кошик порожній.
+    </div>
+    <a href="{% url 'product_list' %}" class="btn btn-primary">⬅ Повернутися до товарів</a>
+  {% endif %}
+</div>
+{% endblock %}
+
+
+

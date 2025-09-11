@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Форма товару{% endblock %}
+
+{% block content %}
+<h2>📝 Форма товару</h2>
+
+<form method="post" enctype="multipart/form-data" class="p-4 bg-white shadow rounded">
+    {% csrf_token %}
+
+    <!-- Показ загальних помилок -->
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    <!-- Основна форма -->
+    {{ form.as_p }}
+
+    <!-- Поле для завантаження нових зображень -->
+    <div class="mb-3">
+        <label for="id_images" class="form-label">📸 Додаткові зображення:</label>
+        <input type="file" name="images" id="id_images" multiple class="form-control">
+        <small class="form-text text-muted">Можна вибрати кілька файлів (затиснувши Ctrl або Shift).</small>
+    </div>
+
+    <!-- Вже додані зображення (лише при редагуванні) -->
+    {% if product and product.productimage_set.exists %}
+      <div class="mb-3">
+        <label class="form-label">🖼 Додані зображення:</label>
+        <div class="d-flex flex-wrap gap-3">
+          {% for image in product.productimage_set.all %}
+            <div class="position-relative">
+              <img src="{{ image.image.url }}" alt="зображення" style="width: 120px; height: 120px; object-fit: cover;" class="border rounded">
+              <a href="{% url 'product_image_delete' image.pk %}" 
+                 class="btn btn-sm btn-danger position-absolute top-0 end-0" 
+                 onclick="return confirm('Ви впевнені, що хочете видалити це зображення?');">×
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Кнопки -->
+    <div class="mt-3 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">💾 Зберегти</button>
+        <a href="{% url 'product_list' %}" class="btn btn-secondary">Назад</a>
+    </div>
+</form>
+{% endblock %}
+
+
+
+
+
+
+

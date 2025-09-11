@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Підтвердження видалення{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="card shadow-sm p-4">
+    <h2 class="mb-3 text-danger">🗑 Підтвердження видалення</h2>
+    <p>Ви дійсно бажаєте видалити товар <strong class="text-dark">{{ product.name }}</strong>?</p>
+
+    <form method="post" class="d-flex flex-wrap gap-2 mt-4">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">
+        🗑 Так, видалити
+      </button>
+      <a href="{% url 'product_detail' product.pk %}" class="btn btn-secondary">
+        ❌ Скасувати
+      </a>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+

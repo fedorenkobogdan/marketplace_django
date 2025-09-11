@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Мої замовлення{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">📦 Мої замовлення</h2>
+
+  {% if orders %}
+    {% for order in orders %}
+      <div class="card mb-4 shadow-sm border-0">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+          <strong>Замовлення #{{ order.id }}</strong>
+          <span class="badge 
+            {% if order.status == 'completed' %}bg-success
+            {% elif order.status == 'cancelled' %}bg-danger
+            {% else %}bg-warning text-dark{% endif %}">
+            {{ order.get_status_display }}
+          </span>
+        </div>
+
+        <div class="card-body">
+          <p><strong>👤 ПІБ:</strong> {{ order.full_name }}</p>
+          <p><strong>🏠 Адреса:</strong> {{ order.address }}</p>
+          <p><strong>📞 Телефон:</strong> {{ order.phone }}</p>
+          <p><strong>💰 Сума:</strong> {{ order.total_price }} грн</p>
+
+          <h6 class="mt-3">📦 Товари в замовленні:</h6>
+          <ul class="list-group list-group-flush">
+            {% for item in order.items.all %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ item.product.name }} × {{ item.quantity }}
+                <span>{{ item.get_subtotal }} грн</span>
+              </li>
+            {% endfor %}
+          </ul>
+
+          {% if order.status != 'completed' and order.status != 'cancelled' %}
+            <form method="post" action="{% url 'cancel_order' order.id %}" class="mt-3 text-end" onsubmit="return confirm('Ви впевнені, що хочете скасувати це замовлення?')">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-danger btn-sm">❌ Скасувати замовлення</button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="alert alert-info shadow-sm">
+      У вас ще немає замовлень.
+    </div>
+    <a href="{% url 'product_list' %}" class="btn btn-primary">← До покупок</a>
+  {% endif %}
+</div>
+{% endblock %}
+

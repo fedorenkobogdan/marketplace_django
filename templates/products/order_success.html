@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Дякуємо!{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
+      <h3 class="text-success mb-3">✅ Замовлення оформлено!</h3>
+      <p class="mb-4 fs-5">Ваш номер замовлення: <strong>#{{ order.id }}</strong></p>
+
+      {% if order.status != 'cancelled' and order.status != 'completed' %}
+        <form method="post" action="{% url 'cancel_order' order.id %}" class="mb-3" onsubmit="return confirm('Справді скасувати замовлення?')">
+          {% csrf_token %}
+          <button class="btn btn-outline-danger">❌ Скасувати замовлення</button>
+        </form>
+      {% else %}
+        <div class="alert alert-secondary">
+          Статус замовлення: <strong>{{ order.get_status_display }}</strong>
+        </div>
+      {% endif %}
+
+      <div class="d-flex gap-2 mt-4">
+        <a href="{% url 'product_list' %}" class="btn btn-outline-primary">← До каталогу</a>
+        <a href="{% url 'my_orders' %}" class="btn btn-outline-success">📄 Мої замовлення</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
